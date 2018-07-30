@@ -26,7 +26,7 @@ class QuizViewController: UIViewController {
     
    // var optionSelected = ""
     var timeTaken = ""
-    var counter = 20
+    var counter = 1
     
     @IBOutlet weak var lblTimer: UILabel!
     @IBOutlet weak var lblQuestions: UILabel!
@@ -126,9 +126,26 @@ class QuizViewController: UIViewController {
         }
             
         else {
+            
+            //
             dismiss(animated: true, completion: nil)
             countdownTimer.invalidate()
-//            startTimer()
+            if (counter > 0)
+            {
+                self.totalTime = 10
+                self.counter -= 1
+                lblQuestions.text = String(counter)
+                startTimer()
+            }
+            else
+            {
+                dismiss(animated: true, completion: nil)
+                countdownTimer.invalidate()
+                
+                let alert = UIAlertController(title: "Game Over", message: "Time out", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Click to see your score", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
     
