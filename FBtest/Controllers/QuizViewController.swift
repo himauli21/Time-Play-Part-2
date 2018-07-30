@@ -16,7 +16,24 @@ class QuizViewController: UIViewController {
 
     var dbConnect:DatabaseReference!
     var handle: DatabaseHandle?
+    var handle2: DatabaseHandle?
+    var alertController: UIAlertController!
+    
+    var label = ""
+    var message = "in "
+    var countdownTimer: Timer!
+    var totalTime = 10
+    
+   // var optionSelected = ""
+    var timeTaken = ""
+    var counter = 20
+    
+    @IBOutlet weak var lblTimer: UILabel!
+    @IBOutlet weak var lblQuestions: UILabel!
+    
     private static var questionData: String!
+    
+    private static var store: Array<String> = Array()
     
 //    let URL = "https://opentdb.com/api.php?amount=20&difficulty=easy&type=multiple"
 //
@@ -28,20 +45,32 @@ class QuizViewController: UIViewController {
 
         self.dbConnect = Database.database().reference()
         
-        handle = dbConnect?.child("Quiz").child("quizId").child("4205356299").observe(.value, with: { (snapshot) in
+        handle = dbConnect?.child("Quiz").child("quizId").child("4205356299").child("Questions").child("results").child("0").child("correct_answer").observe(.value, with: { (snapshot) in
         
-        print(snapshot)
+        //print(snapshot)
             
-            print(snapshot)
-        
+           let ans = snapshot
+            print(ans)
+
             //QuizViewController.questionData = snapshot
-            
-        
+
         })
+        lblQuestions.text = String(counter)
+        startTimer()
         
-        //getQuestions(url: URL)
-        
-        
+//        if (counter == 20)
+//        {
+//            print(counter)
+//        }
+//          else
+//            {
+//                lblQuestions.text = String(counter)
+//
+//                print(counter)
+//                startTimer()
+//                let count = counter + 1
+//                //print(count)
+//            }
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,21 +79,84 @@ class QuizViewController: UIViewController {
     }
     
     @IBAction func optionApressed(_ sender: UIButton) {
-        
+       
+        var ans = ""
+
         if (sender.tag == 0) {
-            print("Option A selected")
+            //print("Option A selected")
+            ans = "A"
         }
         if (sender.tag == 1) {
-            print("Option B selected")
+            //print("Option B selected")
+            ans = "B"
         }
         else if(sender.tag == 2) {
-            print("Option C selected")
+            //print("Option C selected")
+            ans = "C"
         }
         else if(sender.tag == 3) {
-            print("Option D selected")
+            //print("Option D selected")
+            ans = "D"
+        }
+        print(ans)
+       
+        showAlert()
+        countDownString()
+        print(countdownTimer)
+        
+        
+        let e = ["option selected":ans, "time taken":totalTime] as [String : Any]
+        self.dbConnect.child("Quiz").child("quizId").child("Access Code").child("3993760988").child("Participants").child("Himauli").setValue(e)
+        
+    }
+    
+    func startTimer() {
+        
+        countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+    }
+    
+    func updateTime() {
+        let t = "\(timeFormatted(totalTime))"
+        lblTimer.text = t
+        //print(t)
+        if (totalTime > 0) {
+            self.totalTime -= 1
+            print(totalTime)
+    
+        }
+            
+        else {
+            dismiss(animated: true, completion: nil)
+            countdownTimer.invalidate()
+//            startTimer()
         }
     }
     
+    func timeFormatted(_ totalSeconds: Int) -> String {
+        let seconds: Int = totalSeconds % 60
+        let minutes: Int = (totalSeconds / 60)
+        //     let hours: Int = totalSeconds / 3600
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+
+    func showAlert(){
+        let alertController = UIAlertController(title: "Wait for ", message:countDownString(), preferredStyle: .alert)
+
+        present(alertController, animated: true){
+//            self.countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTime), userInfo: nil, repeats: true)
+            
+        }
+    }
+
+    func countDownString() -> String {
+
+        print("\(totalTime) seconds")
+        return "\(totalTime) seconds"
+    }
+    
+    
+ 
     /*
     func getQuestions(url:String) {
         
@@ -134,5 +226,7 @@ class QuizViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+   
 
 }

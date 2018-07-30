@@ -38,13 +38,18 @@ class ViewController: UIViewController {
         
         let email = emailTextView.text!
         let accessCode = accessCodeTextView.text!
+        let optionSelected = "A"
+        let timeTaken = "3 seconds"
        // print(email)
-        print(accessCode)
+       // print(accessCode)
         
-        let e = ["email": email, "access code": accessCode]
+       
+        let e = ["email": email, "option selected":optionSelected, "time taken":timeTaken]
         //print(e)
         
         //self.dbConnect.child("Quiz").child("quizId").child("players").childByAutoId().setValue(e);
+       // self.dbConnect.child("Quiz").child("quizId").child("Access Code").child("3993760988").child("Email").setValue(e);
+        self.dbConnect.child("Quiz").child("quizId").child("Access Code").child(String(accessCode)).child("Participants").child(String(email)).setValue(e)
         
 //        let q = self.dbConnect.child("Quiz").child("quizId")
 //        print(q)
