@@ -25,8 +25,16 @@ class QuizViewController: UIViewController {
     var totalTime = 10
     
    // var optionSelected = ""
-    var timeTaken = ""
-    var counter = 1
+   // var timeTaken = ""
+    var counter = 3
+    var ans = ""
+    
+    var answers = [NSString]()
+    var timeTaken :[Int] = []
+    var optionSelected = [Any]()
+    
+    var email:String = ""
+    var accessCode:String = ""
     
     @IBOutlet weak var lblTimer: UILabel!
     @IBOutlet weak var lblQuestions: UILabel!
@@ -42,6 +50,10 @@ class QuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // get values from previous page
+//        print(email)
+//        print(accessCode)
 
         self.dbConnect = Database.database().reference()
         
@@ -57,20 +69,7 @@ class QuizViewController: UIViewController {
         })
         lblQuestions.text = String(counter)
         startTimer()
-        
-//        if (counter == 20)
-//        {
-//            print(counter)
-//        }
-//          else
-//            {
-//                lblQuestions.text = String(counter)
-//
-//                print(counter)
-//                startTimer()
-//                let count = counter + 1
-//                //print(count)
-//            }
+  
     }
 
     override func didReceiveMemoryWarning() {
@@ -78,10 +77,10 @@ class QuizViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // options click event
     @IBAction func optionApressed(_ sender: UIButton) {
        
-        var ans = ""
-
+        // get the clicked one
         if (sender.tag == 0) {
             //print("Option A selected")
             ans = "A"
@@ -99,49 +98,84 @@ class QuizViewController: UIViewController {
             ans = "D"
         }
         print(ans)
-       
+        
+        print(totalTime)
+        print("---")
+        // append the array of time taken for options clicked
+        timeTaken.append(totalTime)
+        print(timeTaken)
+        
+        print("***")
+        var optionChoosen = [NSString:NSString]()
+        optionChoosen["option_choosen"] = NSString(string: ans)
+        optionChoosen["time_taken_in_second"] = NSString(string:String(totalTime))
+        
+       // print(optionChoosen)
+        
+        // append in final array
+        optionSelected.append(optionChoosen)
+        print(optionSelected)
+        
+        // email and accessCode
+        var result = [NSString:Any]()
+        
         showAlert()
         countDownString()
         print(countdownTimer)
         
-        
+        // insert into firebase
+        /*
         let e = ["option selected":ans, "time taken":totalTime] as [String : Any]
         self.dbConnect.child("Quiz").child("quizId").child("Access Code").child("3993760988").child("Participants").child("Himauli").setValue(e)
-        
+        */
     }
     
+    // function to start the timer
     func startTimer() {
         
         countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
     }
     
-    func updateTime() {
+    // function to update the time
+    func updateTime()
+    {
         let t = "\(timeFormatted(totalTime))"
         lblTimer.text = t
         //print(t)
+        
+        // run the timer for 10 seconds
         if (totalTime > 0) {
             self.totalTime -= 1
             print(totalTime)
-    
-        }
             
+        }
         else {
             
-            //
+            // dismiss the alert after 10 seconds
             dismiss(animated: true, completion: nil)
             countdownTimer.invalidate()
+            
+            // store the answers
+            answers.append(ans as NSString)
+            print(answers)
+            
+            // run the counter for 20 times
             if (counter > 0)
             {
                 self.totalTime = 10
                 self.counter -= 1
+                print("===Round Start===")
+                // change the label
                 lblQuestions.text = String(counter)
                 startTimer()
+                
             }
             else
             {
                 dismiss(animated: true, completion: nil)
                 countdownTimer.invalidate()
                 
+                // Game over alert
                 let alert = UIAlertController(title: "Game Over", message: "Time out", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Click to see your score", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
@@ -149,6 +183,7 @@ class QuizViewController: UIViewController {
         }
     }
     
+    // function to format the time
     func timeFormatted(_ totalSeconds: Int) -> String {
         let seconds: Int = totalSeconds % 60
         let minutes: Int = (totalSeconds / 60)
@@ -157,6 +192,7 @@ class QuizViewController: UIViewController {
     }
 
 
+    // alert after evert question
     func showAlert(){
         let alertController = UIAlertController(title: "Wait for ", message:countDownString(), preferredStyle: .alert)
 
@@ -166,6 +202,7 @@ class QuizViewController: UIViewController {
         }
     }
 
+    // function to print the remaining seconds -> terminal and alert
     func countDownString() -> String {
 
         print("\(totalTime) seconds")

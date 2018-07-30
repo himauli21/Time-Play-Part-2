@@ -20,6 +20,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var emailTextView: UITextField!
     @IBOutlet weak var accessCodeTextView: UITextField!
     
+    var email:String = ""
+    var accessCode:String = ""
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,8 +40,8 @@ class ViewController: UIViewController {
         print("Next Button Pressed!")
         
         
-        let email = emailTextView.text!
-        let accessCode = accessCodeTextView.text!
+        self.email = emailTextView.text!
+        self.accessCode = accessCodeTextView.text!
         let optionSelected = "A"
         let timeTaken = "3 seconds"
        // print(email)
@@ -59,6 +63,12 @@ class ViewController: UIViewController {
             print(snapshot)
 //            ViewController.questionData = snapshot
         })
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let s = segue.destination as! QuizViewController
+        s.email = email
+        s.accessCode = accessCode
     }
     
 }
