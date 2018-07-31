@@ -26,7 +26,7 @@ class QuizViewController: UIViewController {
     
    // var optionSelected = ""
    // var timeTaken = ""
-    var counter = 3
+    var counter = 19
     var ans = ""
     
     var answers = [NSString]()
@@ -36,39 +36,53 @@ class QuizViewController: UIViewController {
     var email:String = ""
     var accessCode:String = ""
     
+    var firstAlert:UIAlertController!
+    
     @IBOutlet weak var lblTimer: UILabel!
     @IBOutlet weak var lblQuestions: UILabel!
     
     private static var questionData: String!
     
     private static var store: Array<String> = Array()
-    
-//    let URL = "https://opentdb.com/api.php?amount=20&difficulty=easy&type=multiple"
-//
-//    let url = "https://opentdb.com/api.php?amount=20&difficulty=easy&type=multiple"
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // get values from previous page
-//        print(email)
-//        print(accessCode)
+
 
         self.dbConnect = Database.database().reference()
         
-        handle = dbConnect?.child("Quiz").child("quizId").child("4205356299").child("Questions").child("results").child("0").child("correct_answer").observe(.value, with: { (snapshot) in
+        handle = dbConnect?.child("Quiz").child("quizId").child(accessCode).child("hasGameStarted").observe(.value, with: { (snapshot) in
         
-        //print(snapshot)
+            print(snapshot)
+            let checker:Bool!
+            checker = snapshot.value as! Bool
             
-           let ans = snapshot
-            print(ans)
-
-            //QuizViewController.questionData = snapshot
+             print("AFTER TRANSACTION")
+            print(checker)
+            
+            if( checker ){
+                
+                if( !self.firstAlert.isBeingDismissed ){
+                   self.firstAlert.dismiss(animated: true, completion: nil)
+                }
+                
+                self.lblQuestions.text = String(self.counter)
+                self.startTimer()
+                
+            }else{
+             
+                self.firstAlert = UIAlertController(title: "Wait", message: "Please wait while all the users logIn to system.", preferredStyle: UIAlertControllerStyle.alert)
+                self.present(self.firstAlert, animated: true, completion: nil)
+                
+                
+            }
+            
 
         })
-        lblQuestions.text = String(counter)
-        startTimer()
+        
+      
   
     }
 
@@ -105,10 +119,13 @@ class QuizViewController: UIViewController {
         timeTaken.append(totalTime)
         print(timeTaken)
         
+        var totalTimeTaken:Int!
+        totalTimeTaken = 10-totalTime;
+        
         print("***")
         var optionChoosen = [NSString:NSString]()
         optionChoosen["option_choosen"] = NSString(string: ans)
-        optionChoosen["time_taken_in_second"] = NSString(string:String(totalTime))
+        optionChoosen["time_taken_in_second"] = NSString(string:String(totalTimeTaken))
         
        // print(optionChoosen)
         
@@ -132,7 +149,7 @@ class QuizViewController: UIViewController {
         let e = ["option_choosen":optionSelected] as [String : Any]
         result["Answers"] = optionSelected
         
-        self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Users").child(email).setValue(result)
+    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Users").child(email).setValue(result)
     }
     
     // function to start the timer
@@ -182,7 +199,7 @@ class QuizViewController: UIViewController {
                 
                 // Game over alert
                 let alert = UIAlertController(title: "Game Over", message: "Time out", preferredStyle: UIAlertControllerStyle.alert)
-                alert.addAction(UIAlertAction(title: "Click to see your score", style: UIAlertActionStyle.default, handler: nil))
+                alert.addAction(UIAlertAction(title: "Your score will be presented on the main system.", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
         }
@@ -214,78 +231,5 @@ class QuizViewController: UIViewController {
         return "\(totalTime) seconds"
     }
     
-    
- 
-    /*
-    func getQuestions(url:String) {
-        
-        // Build the URL:
-        
-        
-        let url = "https://opentdb.com/api.php?amount=20&difficulty=easy&type=multiple"
-        
-        print(url)
-        
-        print("Patel")
-        Alamofire.request(url, method: .get, parameters: nil).responseJSON {
-            (response) in
-            if response.result.isSuccess {
-                
-                if let dataFromServer = response.data {
-                    do {
-                        let json = try JSON(data: dataFromServer)
-                        // TODO: Parse the json response
-                        
-                        //print(json)
-                        let que = json["results"].arrayValue
-                        //let date = orders[0]["created_at"].stringValue
-                        //let questions = que[0]["question"].stringValue
-                        
-                       // print(questions)
-                        
-                        for item in que{
-                            
-                            
-                            let questions = item["question"].stringValue
-                            print("=====")
-                            print(questions)
-                            
-//                            let isDate = item["created_at"].stringValue
-//                            let orderId = String(describing: item["id"].doubleValue)
-//                            let email = item["contact_email"].stringValue
-//                            let province = item["shipping_address"]["province"].stringValue
-                            
-                        }
-                    }
-                    catch {
-                        print("error")
-                    }
-                }
-                else {
-                    print("Error when getting JSON from the response")
-                }
-            }
-            else {
-                
-                // 6. You got an error while trying to connect to the API
-                print("Error while fetching data from URL")
-            }
-        }
-    }
-    
-    */
-    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
-   
 
 }
