@@ -118,16 +118,21 @@ class QuizViewController: UIViewController {
         
         // email and accessCode
         var result = [NSString:Any]()
+        result["UserName"] = NSString(string: email)
+        result["Access Code"] = NSString(string: accessCode)
+        
+        print(result)
         
         showAlert()
         countDownString()
         print(countdownTimer)
         
         // insert into firebase
-        /*
-        let e = ["option selected":ans, "time taken":totalTime] as [String : Any]
-        self.dbConnect.child("Quiz").child("quizId").child("Access Code").child("3993760988").child("Participants").child("Himauli").setValue(e)
-        */
+        
+        let e = ["option_choosen":optionSelected] as [String : Any]
+        result["Answers"] = optionSelected
+        
+        self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Users").child(email).setValue(result)
     }
     
     // function to start the timer

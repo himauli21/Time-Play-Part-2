@@ -53,7 +53,7 @@ class ViewController: UIViewController {
         
         //self.dbConnect.child("Quiz").child("quizId").child("players").childByAutoId().setValue(e);
        // self.dbConnect.child("Quiz").child("quizId").child("Access Code").child("3993760988").child("Email").setValue(e);
-        self.dbConnect.child("Quiz").child("quizId").child("Access Code").child(String(accessCode)).child("Participants").child(String(email)).setValue(e)
+       // self.dbConnect.child("Quiz").child("quizId").child("Access Code").child(String(accessCode)).child("Participants").child(String(email)).setValue(e)
         
 //        let q = self.dbConnect.child("Quiz").child("quizId")
 //        print(q)
