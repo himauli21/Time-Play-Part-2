@@ -149,7 +149,8 @@ class QuizViewController: UIViewController {
         let e = ["option_choosen":optionSelected] as [String : Any]
         result["Answers"] = optionSelected
         
-    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Users").child(email).setValue(result)
+    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Questions").child( String( self.counter ) ).child("Users").child(email).setValue(result)
+        
     }
     
     // function to start the timer
