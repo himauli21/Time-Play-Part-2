@@ -27,6 +27,7 @@ class QuizViewController: UIViewController {
    // var optionSelected = ""
    // var timeTaken = ""
     var counter = 19
+    var counter1 = 19
     var ans = ""
     
     var answers = [NSString]()
@@ -132,24 +133,12 @@ class QuizViewController: UIViewController {
         // append in final array
         optionSelected.append(optionChoosen)
         print(optionSelected)
-        
-        // email and accessCode
-        var result = [NSString:Any]()
-        result["UserName"] = NSString(string: email)
-        result["Access Code"] = NSString(string: accessCode)
-        
-        print(result)
-        
         showAlert()
         countDownString()
         print(countdownTimer)
         
-        // insert into firebase
-        
-        let e = ["option_choosen":optionSelected] as [String : Any]
-        result["Answers"] = optionSelected
-        
-    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Questions").child( String( self.counter ) ).child("Users").child(email).setValue(result)
+        var diff = self.counter1 - self.counter
+    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Questions").child( String( diff ) ).child("Users").child(email).setValue(optionSelected)
         
     }
     
