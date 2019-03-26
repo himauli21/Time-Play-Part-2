@@ -26,8 +26,8 @@ class QuizViewController: UIViewController {
     
    // var optionSelected = ""
    // var timeTaken = ""
-    var counter = 19
-    var counter1 = 19
+    var counter = 4
+    var counter1 = 4
     var ans = ""
     
     var answers = [NSString]()
@@ -79,10 +79,7 @@ class QuizViewController: UIViewController {
                 
                 
             }
-            
-
         })
-        
       
   
     }
@@ -133,12 +130,14 @@ class QuizViewController: UIViewController {
         // append in final array
         optionSelected.append(optionChoosen)
         print(optionSelected)
+        
+        
         showAlert()
         countDownString()
         print(countdownTimer)
         
         var diff = self.counter1 - self.counter
-    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Questions").child( String( diff ) ).child("Users").child(email).setValue(optionSelected)
+    self.dbConnect.child("Quiz").child("quizId").child(accessCode).child("Questions").child( String( diff ) ).child("Users").child(email).setValue(optionChoosen)
         
     }
     
